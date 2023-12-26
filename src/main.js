@@ -26,6 +26,8 @@ import {
 } from "@metaplex-foundation/js";
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes/index.js";
 import inquirer from 'inquirer';
+import ora from 'ora';
+import chalk from 'chalk';
 
 const getNetworkConfig = (network) => {
     return network === "mainnet"
@@ -192,17 +194,17 @@ const askQuestions = async () => {
 
 const main = async () => {
     try {
-        console.log("Starting token creation process...");
+        console.log(chalk.blue("Starting token creation process...\n"));
 
         const answers = await askQuestions();
-        console.log("Network selected:", answers.network);
+        console.log(chalk.yellow("Network selected:"), answers.network);
 
         const network = getNetworkConfig(answers.network);
-        console.log("Connecting to Solana cluster:", network.cluster);
+        console.log(chalk.yellow("Connecting to Solana cluster:"), network.cluster);
         const connection = new Connection(network.cluster);
 
         const userWallet = Keypair.fromSecretKey(bs58.decode(answers.secretKey));
-        console.log("User wallet address:", userWallet.publicKey.toString());
+        console.log(chalk.yellow("User wallet address:"), userWallet.publicKey.toString());
 
         const metaplex = Metaplex.make(connection)
             .use(keypairIdentity(userWallet))
@@ -212,19 +214,28 @@ const main = async () => {
             decimals: parseInt(answers.decimals),
             totalSupply: parseFloat(answers.supply),
         };
-        console.log(`Token parameters set: Decimals=${token.decimals}, Total Supply=${token.totalSupply}`);
 
         const tokenMetadata = {
             name: answers.tokenName,
             symbol: answers.symbol,
             image: answers.image,
-            sellerFeeBasisPoints: parseInt(answers.royalty)
+            sellerFeeBasisPoints: parseInt(answers.royalty),
+            decimals: token.decimals,
+            totalSupply: token.totalSupply
         };
-        console.log(`Token metadata: Name=${tokenMetadata.name}, Symbol=${tokenMetadata.symbol}, Image URL=${tokenMetadata.image}, Royalty=${tokenMetadata.sellerFeeBasisPoints} basis points`);
 
-        console.log("Uploading token metadata...");
+        console.log(chalk.yellow("Token information:"));
+        console.log(chalk.cyan("- Name:"), tokenMetadata.name);
+        console.log(chalk.cyan("- Symbol:"), tokenMetadata.symbol);
+        console.log(chalk.cyan("- Image URL:"), tokenMetadata.image);
+        console.log(chalk.cyan("- Royalty:"), `${tokenMetadata.sellerFeeBasisPoints} basis points`);
+        console.log(chalk.cyan("- Decimals:"), tokenMetadata.decimals);
+        console.log(chalk.cyan("- Total Supply:"), tokenMetadata.totalSupply, "\n");
+
+        const spinner1 = ora(chalk.yellow("Uploading token metadata...")).start();
         let metadataUri = await uploadMetadata(metaplex, tokenMetadata);
-        console.log("Metadata uploaded. URI:", metadataUri);
+        spinner1.succeed(chalk.green("Metadata uploaded. URI:"), metadataUri);
+
         const tokenMetadataV2 = {
             ...tokenMetadata,
             uri: metadataUri,
@@ -233,25 +244,26 @@ const main = async () => {
             uses: null
         };
 
+        const spinner2 = ora(chalk.yellow("Generating token address...")).start();
         let mintKeypair = Keypair.generate();
-        console.log(`Generated token address: ${mintKeypair.publicKey.toString()}`);
+        spinner2.succeed(chalk.green(`Generated token address: ${mintKeypair.publicKey.toString()}`));
 
-        console.log("Creating and sending mint token transaction...");
+        const spinner3 = ora(chalk.yellow("Creating and sending mint token transaction...")).start();
         const mintTransaction = await createMintTokenTransaction(connection, metaplex, userWallet, mintKeypair, token, tokenMetadataV2, userWallet.publicKey, mintKeypair.publicKey);
+        spinner3.succeed(chalk.green("Transaction successful."));
 
         let { lastValidBlockHeight, blockhash } = await connection.getLatestBlockhash("finalized");
         const transactionId = await connection.sendTransaction(mintTransaction);
         await connection.confirmTransaction({ signature: transactionId, lastValidBlockHeight, blockhash });
 
-        console.log(`Transaction successful. Hash: ${transactionId}`);
-        console.log(`View transaction on Solana Explorer: https://explorer.solana.com/tx/${transactionId}?cluster=${answers.network}`);
-        console.log(`View token on Solana Explorer: https://explorer.solana.com/address/${mintKeypair.publicKey.toString()}?cluster=${answers.network}`);
+        console.log(chalk.green(`View transaction on Solana Explorer: https://explorer.solana.com/tx/${transactionId}?cluster=${answers.network}`));
+        console.log(chalk.green(`View token on Solana Explorer: https://explorer.solana.com/address/${mintKeypair.publicKey.toString()}?cluster=${answers.network}`));
 
         if (answers.network === "mainnet") {
-            console.log(`View token on Solana BirdEye: https://explorer.solana.com/address/${mintKeypair.publicKey.toString()}?cluster=${answers.network}`);
+            console.log(chalk.green(`View token on Solana BirdEye: https://explorer.solana.com/address/${mintKeypair.publicKey.toString()}?cluster=${answers.network}`));
         }
     } catch (error) {
-        console.error("An error occurred:", error);
+        console.error(chalk.red("An error occurred:"), error);
         process.exit(1);
     }
 };
