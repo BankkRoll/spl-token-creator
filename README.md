@@ -1,50 +1,106 @@
 # SPL Token Creator
 
-The SPL Token Creator project allows you to create and mint SPL tokens on the Solana blockchain. 
+A CLI tool for creating and minting SPL tokens on the Solana blockchain with advanced features and comprehensive error handling.
 
 ## Getting Started
 
-To get started with creating and minting SPL tokens, follow these steps:
-
-1. Clone this repository to your local machine:
+1. **Clone the Repository**
 
    ```bash
    git clone https://github.com/BankkRoll/spl-token-creator.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
    cd spl-token-creator
    ```
 
-3. Install the project dependencies:
+2. **Install Dependencies**
 
    ```bash
    npm install
    ```
 
-
-4. Create your token:
-
-   Run the following command to start the token creation process:
-
+3. **Launch the Creator**
    ```bash
    npm start
    ```
 
-6. Follow the prompts:
+## Interactive Creation Process
 
-   The script will prompt you with questions to configure your token, such as token decimals, total supply, token name, symbol, image URL, and royalty percentage.
+1. **Network Selection**
 
-7. Token Creation:
+   - Choose between Devnet (testing) and Mainnet (production)
+   - Automatic network configuration
 
-   - The script will create and send the mint token transaction.
-   - You will receive updates on the transaction's success, transaction hash, and links to view the transaction on Solana Explorer and Solana BirdEye (if on the mainnet).
+2. **Token Configuration**
 
-8. Congratulations! You've successfully created and minted an SPL token on the Solana blockchain.
+   - Decimals: 0-9 (default: 9)
+   - Total Supply: Any positive number
+   - Token Name: Up to 32 characters
+   - Symbol: Up to 10 characters
+   - Image URL: Valid URL for token image
+   - Royalty: 0-100% (in basis points)
 
-## Additional Information
+3. **Wallet Authentication**
+   - Secure secret key input
+   - Automatic validation
+   - Local-only processing
 
-- This project is designed for local use, and your wallet's secret key is not stored or transmitted over the internet. It's important to keep your wallet's secret key secure and never share it with anyone. The token creation process is entirely local, and your wallet's secret key is only used for transaction signing within the script.
+## Output Information
 
+The tool provides comprehensive information after successful token creation:
+
+- **Token Details**
+
+  - Name and Symbol
+  - Decimals and Total Supply
+  - Mint Address
+  - Associated Token Account
+
+- **Economics**
+
+  - Royalty Percentage
+  - Transaction Fees
+  - Network Details
+
+- **Transaction Information**
+  - Transaction Hash
+  - Block Time
+  - Execution Duration
+  - Explorer Links
+
+## Explorer Integration
+
+- **Automatic Links Generation**
+  - Token Explorer URL
+  - Transaction Explorer URL
+  - Network-aware URLs (Devnet/Mainnet)
+
+## 🛡️ Security Considerations
+
+- Secret keys are never stored or transmitted
+- All transactions are signed locally
+- Input validation for all parameters
+- Secure error handling
+- Network-specific configurations
+
+## ⚡ Technical Details
+
+- Uses Versioned Transactions
+- Implements Metadata Program V3
+- Supports Associated Token Accounts
+- Handles PDA derivation
+- Manages rent exemption
+- Implements proper error handling
+
+## 🔧 Error Handling
+
+The tool includes comprehensive error handling for:
+
+- Invalid inputs
+- Network connection issues
+- Transaction failures
+- Insufficient balances
+- Invalid wallet keys
+- Metadata creation errors
+
+## 📝 License
+
+MIT License - feel free to use and modify as needed.
