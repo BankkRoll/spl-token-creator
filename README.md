@@ -75,7 +75,7 @@ The tool provides comprehensive information after successful token creation:
   - Transaction Explorer URL
   - Network-aware URLs (Devnet/Mainnet)
 
-## 🛡️ Security Considerations
+## Security Considerations
 
 - Secret keys are never stored or transmitted
 - All transactions are signed locally
@@ -83,7 +83,7 @@ The tool provides comprehensive information after successful token creation:
 - Secure error handling
 - Network-specific configurations
 
-## ⚡ Technical Details
+## Technical Details
 
 - Uses Versioned Transactions
 - Implements Metadata Program V3
@@ -92,7 +92,7 @@ The tool provides comprehensive information after successful token creation:
 - Manages rent exemption
 - Implements proper error handling
 
-## 🔧 Error Handling
+## Error Handling
 
 The tool includes comprehensive error handling for:
 
@@ -103,6 +103,6 @@ The tool includes comprehensive error handling for:
 - Invalid wallet keys
 - Metadata creation errors
 
-## 📝 License
+## License
 
 MIT License - feel free to use and modify as needed.
