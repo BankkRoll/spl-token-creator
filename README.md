@@ -1,4 +1,6 @@
-# SPL Token Creator
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/30cdaa36-cdca-42de-99d1-e9de5a470f0d" alt="Centered Image">
+</p>
 
 A CLI tool for creating and minting SPL tokens on the Solana blockchain with advanced features and comprehensive error handling.
 
